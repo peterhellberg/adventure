@@ -14,12 +14,57 @@ func TestNewGame(t *testing.T) {
 	if g.Player.Position != "kitchen" {
 		t.Fatal("unexpected player starting position:", g.Player.Position)
 	}
+
+	g.walk("", []string{"garden", "shed"})
+	g.take("", []string{"ladder"})
+	g.walk("", []string{"garden", "kitchen", "livingroom"})
+	g.use("", []string{"ladder"})
+
+	if g.Player.Position != "attic" {
+		t.Fatal("unexpected player position:", g.Player.Position)
+	}
+
+	g.walk("", []string{"livingroom", "hallway", "basement"})
+
+	if g.Player.Position != "hallway" {
+		t.Fatal("unexpected player position:", g.Player.Position)
+	}
+
+	g.walk("", []string{"livingroom", "attic"})
+	g.take("", []string{"flashlight"})
+	g.walk("", []string{"livingroom", "hallway", "basement"})
+
+	if g.Player.Position != "basement" {
+		t.Fatal("unexpected player position:", g.Player.Position)
+	}
+
+	out, err := g.look("", []string{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if want := "YOU CAN SEE EVERYTHING\n\n" +
+		"You are standing in the basement for the first time.\n" +
+		"Paths: hallway"; out != want {
+		t.Fatalf("unexpected output: %q, want %q", out, want)
+	}
+
+	g.drop("", []string{"carrot"})
+
+	out, err = g.items("", []string{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if want := "You are carrying: flashlight"; out != want {
+		t.Fatalf("unexpected output: %q, want %q", out, want)
+	}
 }
 
 func TestGameComands(t *testing.T) {
 	g := &Game{}
 
-	if got, want := len(g.commands()), 10; got != want {
+	if got, want := len(g.commands()), 8; got != want {
 		t.Fatalf("unexpected number of game commands: %d, want %d", got, want)
 	}
 }
@@ -54,7 +99,7 @@ func TestGameGeneric(t *testing.T) {
 	}
 }
 
-func TestGameInventory(t *testing.T) {
+func TestGameItems(t *testing.T) {
 	for i, tt := range []struct {
 		items Items
 		out   string
@@ -62,15 +107,15 @@ func TestGameInventory(t *testing.T) {
 		{Items{}, notCarryingMessage},
 		{Items{"foo": &Item{}, "bar": &Item{}}, "You are carrying: bar, foo"},
 	} {
-		g := &Game{Player: &Player{Inventory: tt.items}}
+		g := &Game{Player: &Player{Items: tt.items}}
 
-		out, err := g.inventory("", []string{})
+		out, err := g.items("", []string{})
 		if err != nil {
 			t.Fatalf("T%d: unexpected error: %v", i, err)
 		}
 
 		if out != tt.out {
-			t.Fatalf("T%d: unexpected output: %q, want %q", i, out, tt.out)
+			t.Fatalf("T%d: unexpected g.items output: %q, want %q", i, out, tt.out)
 		}
 	}
 }
@@ -83,8 +128,8 @@ func TestGameHelp(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if out != youCanPerformMessage+
-		"drop, exit, find, help, inventory, kill, look, take, use, walk" {
+	if out != canPerformMessage+
+		"drop, exit, help, items, look, take, use, walk" {
 		t.Fatalf("unexpected output: %q", out)
 	}
 }
@@ -95,13 +140,11 @@ func TestGameLook(t *testing.T) {
 		out   string
 	}{
 		{[]string{}, "You are standing in the kitchen for the first time.\nPaths: garden, livingroom"},
-		{[]string{"garden"}, "You are standing in the garden for the first time.\nPaths: kitchen\nItems: ladder"},
+		{[]string{"garden", "shed"}, "You are standing in the shed for the first time.\nPaths: garden\nItems: ladder"},
 	} {
 		g := NewGame()
 
-		for _, w := range tt.walks {
-			g.walk("", []string{w})
-		}
+		g.walk("", tt.walks)
 
 		out, err := g.look("", []string{})
 		if err != nil {
@@ -111,5 +154,18 @@ func TestGameLook(t *testing.T) {
 		if out != tt.out {
 			t.Fatalf("T%d: unexpected output: %q, want %q", i, out, tt.out)
 		}
+	}
+}
+
+func TestGameExit(t *testing.T) {
+	g := NewGame()
+
+	out, err := g.exit("", []string{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if out != byeMessage {
+		t.Fatalf("unexpected output: %q", out)
 	}
 }
