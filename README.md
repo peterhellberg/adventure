@@ -12,6 +12,20 @@ I started working on the long flight back to Europe after [GopherCon](http://gop
 
     go get -u github.com/peterhellberg/adventure
 
+## Playing the game
+
+```bash
+Adventure game!
+▶ help
+You can perform the following commands:
+drop, exit, help, items, look, take, use, walk
+▶ look
+You are standing in the kitchen for the first time.
+Paths: garden, livingroom
+▶ walk garden
+You walked to the garden
+```
+
 ## License (MIT)
 
 Copyright (c) 2015 [Peter Hellberg](http://c7.se/)
