@@ -6,6 +6,8 @@
 
 A small text based adventure game using the [ishell](https://github.com/abiosoft/ishell) package.
 
+I started working on the long flight back to Europe after [GopherCon](http://gophercon.com) 2015.
+
 ## Installation
 
     go get -u github.com/peterhellberg/adventure
