@@ -1,13 +1,18 @@
 package game
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/abiosoft/ishell"
 )
 
 const (
-	WelcomeMessage = "Adventure game!"
+	welcomeMessage       = "Adventure game!"
+	genericMessage       = "You don’t know how to do that."
+	notCarryingMessage   = "You are not carrying anything."
+	carryingMessage      = "You are carrying: "
+	youCanPerformMessage = "You can perform the following commands:\n"
 )
 
 type Game struct {
@@ -16,11 +21,18 @@ type Game struct {
 	Places Places
 }
 
-func Start() {
+func NewGame() *Game {
 	g := &Game{ishell.NewShell(), NewPlayer(), NewPlaces()}
 
-	g.Println(WelcomeMessage)
 	g.Setup()
+
+	return g
+}
+
+func Start() {
+	g := NewGame()
+
+	g.Println(welcomeMessage)
 	g.Start()
 }
 
@@ -61,17 +73,17 @@ func (g *Game) Place() *Place {
 }
 
 func (g *Game) generic(cmd string, args []string) (string, error) {
-	return "You don’t know how to do that.", nil
+	return genericMessage, nil
 }
 
 func (g *Game) inventory(cmd string, args []string) (string, error) {
 	items := g.Player.Inventory
 
 	if len(items) == 0 {
-		return "You are not carrying anything.", nil
+		return notCarryingMessage, nil
 	}
 
-	return "You are carrying: " + items.String(), nil
+	return carryingMessage + items.String(), nil
 }
 
 func (g *Game) help(cmd string, args []string) (string, error) {
@@ -81,29 +93,32 @@ func (g *Game) help(cmd string, args []string) (string, error) {
 		commandNames = append(commandNames, n)
 	}
 
-	return "You can perform the following commands:\n" +
-		strings.Join(commandNames, ", "), nil
+	sort.Strings(commandNames)
+
+	return youCanPerformMessage + strings.Join(commandNames, ", "), nil
 }
 
 func (g *Game) look(cmd string, args []string) (string, error) {
 	p := g.Place()
 
+	l := []string{}
+
 	switch p.VisitCount {
 	case 1:
-		g.Println("You are standing in the " + p.Name + " for the first time.")
+		l = append(l, "You are standing in the "+p.Name+" for the first time.")
 	default:
-		g.Println("You are standing in the " + p.Name)
+		l = append(l, "You are standing in the "+p.Name)
 	}
 
 	if len(p.Paths) > 0 {
-		g.Println("Paths: " + p.Paths.String())
+		l = append(l, "Paths: "+p.Paths.String())
 	}
 
 	if len(p.Items) > 0 {
-		g.Println("Items: " + p.Items.String())
+		l = append(l, "Items: "+p.Items.String())
 	}
 
-	return "", nil
+	return strings.Join(l, "\n"), nil
 }
 
 func (g *Game) take(cmd string, args []string) (string, error) {
@@ -111,20 +126,26 @@ func (g *Game) take(cmd string, args []string) (string, error) {
 		return "You didn’t tell me what to take.", nil
 	}
 
-	name := args[0]
+	l := []string{}
 
-	p := g.Place()
+	for _, name := range args {
+		p := g.Place()
 
-	if item, ok := p.Items[name]; ok {
-		delete(p.Items, name)
+		if item, ok := p.Items[name]; ok {
+			delete(p.Items, name)
 
-		g.Player.Inventory[name] = item
+			g.Player.Inventory[name] = item
 
-		if item.Take != nil {
-			return item.Take(g), nil
+			if item.Take != nil {
+				return item.Take(g), nil
+			}
+
+			l = append(l, "You took the "+name)
 		}
+	}
 
-		return "You took the " + name, nil
+	if len(l) > 0 {
+		return strings.Join(l, "\n"), nil
 	}
 
 	return "You can’t take that which doesn’t exist.", nil
@@ -135,16 +156,22 @@ func (g *Game) drop(cmd string, args []string) (string, error) {
 		return "You didn’t tell me what to drop.", nil
 	}
 
-	name := args[0]
+	l := []string{}
 
-	p := g.Place()
+	for _, name := range args {
+		p := g.Place()
 
-	if item, ok := g.Player.Inventory[name]; ok {
-		delete(g.Player.Inventory, name)
+		if item, ok := g.Player.Inventory[name]; ok {
+			delete(g.Player.Inventory, name)
 
-		p.Items[name] = item
+			p.Items[name] = item
 
-		return "You dropped the " + name, nil
+			l = append(l, "You dropped the "+name)
+		}
+	}
+
+	if len(l) > 0 {
+		return strings.Join(l, "\n"), nil
 	}
 
 	return "Unable to drop something you are not carrying.", nil
