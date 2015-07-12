@@ -59,8 +59,8 @@ func (g *Game) Place() *Place {
 	return &Place{Name: "void", Paths: []string{"nowhere"}}
 }
 
-func (g *Game) commands() map[string]func(string, []string) (string, error) {
-	return map[string]func(string, []string) (string, error){
+func (g *Game) commands() map[string]func(...string) (string, error) {
+	return map[string]func(...string) (string, error){
 		"drop":  g.drop,
 		"exit":  g.exit,
 		"help":  g.help,
@@ -72,11 +72,11 @@ func (g *Game) commands() map[string]func(string, []string) (string, error) {
 	}
 }
 
-func (g *Game) generic(cmd string, args []string) (string, error) {
+func (g *Game) generic(args ...string) (string, error) {
 	return genericMessage, nil
 }
 
-func (g *Game) items(cmd string, args []string) (string, error) {
+func (g *Game) items(args ...string) (string, error) {
 	items := g.Player.Items
 
 	if len(items) == 0 {
@@ -86,7 +86,7 @@ func (g *Game) items(cmd string, args []string) (string, error) {
 	return carryingMessage + items.String(), nil
 }
 
-func (g *Game) help(cmd string, args []string) (string, error) {
+func (g *Game) help(args ...string) (string, error) {
 	commandNames := []string{}
 
 	for n, _ := range g.commands() {
@@ -98,7 +98,7 @@ func (g *Game) help(cmd string, args []string) (string, error) {
 	return canPerformMessage + strings.Join(commandNames, ", "), nil
 }
 
-func (g *Game) look(cmd string, args []string) (string, error) {
+func (g *Game) look(args ...string) (string, error) {
 	p := g.Place()
 
 	if p.Look != nil {
@@ -113,7 +113,7 @@ func (g *Game) look(cmd string, args []string) (string, error) {
 	return p.describe(), nil
 }
 
-func (g *Game) take(cmd string, args []string) (string, error) {
+func (g *Game) take(args ...string) (string, error) {
 	if len(args) == 0 {
 		return "You didn’t tell me what to take.", nil
 	}
@@ -150,7 +150,7 @@ func (g *Game) takeItem(name string) (*Item, bool) {
 	return nil, false
 }
 
-func (g *Game) drop(cmd string, args []string) (string, error) {
+func (g *Game) drop(args ...string) (string, error) {
 	if len(args) == 0 {
 		return "You didn’t tell me what to drop.", nil
 	}
@@ -181,7 +181,7 @@ func (g *Game) dropItem(name string) bool {
 	return false
 }
 
-func (g *Game) use(cmd string, args []string) (string, error) {
+func (g *Game) use(args ...string) (string, error) {
 	if len(args) == 0 {
 		return "You didn’t tell me what to use.", nil
 	}
@@ -199,7 +199,7 @@ func (g *Game) use(cmd string, args []string) (string, error) {
 	return "You are not carrying that item.", nil
 }
 
-func (g *Game) walk(cmd string, args []string) (string, error) {
+func (g *Game) walk(args ...string) (string, error) {
 	if len(args) == 0 {
 		return "You need to specify where to go.", nil
 	}
@@ -244,7 +244,7 @@ func (g *Game) walk(cmd string, args []string) (string, error) {
 	return cantGoMessage, nil
 }
 
-func (g *Game) exit(cmd string, args []string) (string, error) {
+func (g *Game) exit(args ...string) (string, error) {
 	g.Stop()
 
 	return byeMessage, nil

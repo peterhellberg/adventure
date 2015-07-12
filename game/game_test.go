@@ -15,30 +15,30 @@ func TestNewGame(t *testing.T) {
 		t.Fatal("unexpected player starting position:", g.Player.Position)
 	}
 
-	g.walk("", []string{"garden", "shed"})
-	g.take("", []string{"ladder"})
-	g.walk("", []string{"garden", "kitchen", "livingroom"})
-	g.use("", []string{"ladder"})
+	g.walk("garden", "shed")
+	g.take("ladder")
+	g.walk("garden", "kitchen", "livingroom")
+	g.use("ladder")
 
 	if g.Player.Position != "attic" {
 		t.Fatal("unexpected player position:", g.Player.Position)
 	}
 
-	g.walk("", []string{"livingroom", "hallway", "basement"})
+	g.walk("livingroom", "hallway", "basement")
 
 	if g.Player.Position != "hallway" {
 		t.Fatal("unexpected player position:", g.Player.Position)
 	}
 
-	g.walk("", []string{"livingroom", "attic"})
-	g.take("", []string{"flashlight"})
-	g.walk("", []string{"livingroom", "hallway", "basement"})
+	g.walk("livingroom", "attic")
+	g.take("flashlight")
+	g.walk("livingroom", "hallway", "basement")
 
 	if g.Player.Position != "basement" {
 		t.Fatal("unexpected player position:", g.Player.Position)
 	}
 
-	out, err := g.look("", []string{})
+	out, err := g.look()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -49,9 +49,9 @@ func TestNewGame(t *testing.T) {
 		t.Fatalf("unexpected output: %q, want %q", out, want)
 	}
 
-	g.drop("", []string{"carrot"})
+	g.drop("carrot")
 
-	out, err = g.items("", []string{})
+	out, err = g.items()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -89,7 +89,7 @@ func TestGamePlace(t *testing.T) {
 func TestGameGeneric(t *testing.T) {
 	g := &Game{}
 
-	out, err := g.generic("", []string{})
+	out, err := g.generic()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -109,7 +109,7 @@ func TestGameItems(t *testing.T) {
 	} {
 		g := &Game{Player: &Player{Items: tt.items}}
 
-		out, err := g.items("", []string{})
+		out, err := g.items()
 		if err != nil {
 			t.Fatalf("T%d: unexpected error: %v", i, err)
 		}
@@ -123,7 +123,7 @@ func TestGameItems(t *testing.T) {
 func TestGameHelp(t *testing.T) {
 	g := &Game{}
 
-	out, err := g.help("", []string{})
+	out, err := g.help()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -144,9 +144,9 @@ func TestGameLook(t *testing.T) {
 	} {
 		g := NewGame()
 
-		g.walk("", tt.walks)
+		g.walk(tt.walks...)
 
-		out, err := g.look("", []string{})
+		out, err := g.look()
 		if err != nil {
 			t.Fatalf("T%d: unexpected error: %v", i, err)
 		}
@@ -160,7 +160,7 @@ func TestGameLook(t *testing.T) {
 func TestGameExit(t *testing.T) {
 	g := NewGame()
 
-	out, err := g.exit("", []string{})
+	out, err := g.exit()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
