@@ -1,19 +1,14 @@
-+***Warning: This package is under development, use with caution***
+# adventure
 
-# maze
+[![Build Status](https://travis-ci.org/peterhellberg/adventure.svg?branch=master)](https://travis-ci.org/peterhellberg/adventure)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/peterhellberg/adventure/game)
+[![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/peterhellberg/adventure#license-mit)
 
-[![Build Status](https://travis-ci.org/peterhellberg/maze.svg?branch=master)](https://travis-ci.org/peterhellberg/maze)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/peterhellberg/maze)
-[![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/peterhellberg/maze#license-mit)
-
-Generate a maze using [Prim's Algorithm](https://en.wikipedia.org/wiki/Maze_generation_algorithm#Randomized_Prim.27s_algorithm)
-
-The maze generation is heavily based on the [pyramid example](https://github.com/JoelOtter/termloop/blob/master/_examples/pyramid.go)
-in the [termloop](https://github.com/JoelOtter/termloop) package.
+A small text based adventure game using the [ishell](https://github.com/abiosoft/ishell) package.
 
 ## Installation
 
-    go get -u github.com/peterhellberg/maze
+    go get -u github.com/peterhellberg/adventure
 
 ## License (MIT)
 
