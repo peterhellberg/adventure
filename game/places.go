@@ -3,34 +3,39 @@ package game
 type Places map[string]*Place
 
 type Place struct {
-	Name  string
-	Paths Paths
-	Items Items
+	Name       string
+	Paths      Paths
+	Items      Items
+	VisitCount int
 }
 
 var (
 	kitchen = &Place{
 		"kitchen",
 		Paths{"garden", "livingroom"},
-		Items{"foobar": &Item{}},
+		Items{},
+		1,
 	}
 
 	garden = &Place{
 		"garden",
 		Paths{"kitchen"},
-		Items{},
+		Items{"ladder": newLadder()},
+		0,
 	}
 
 	livingroom = &Place{
 		"livingroom",
-		Paths{"kitchen", "attic"},
+		Paths{"kitchen"},
 		Items{},
+		0,
 	}
 
 	attic = &Place{
 		"attic",
 		Paths{"livingroom"},
 		Items{"flashlight": &Item{}},
+		1,
 	}
 )
 

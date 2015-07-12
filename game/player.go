@@ -3,12 +3,14 @@ package game
 type Player struct {
 	Name      string
 	Position  string
-	Inventory []string
+	Inventory Items
 }
 
 func NewPlayer() *Player {
 	return &Player{
-		Position:  "kitchen",
-		Inventory: []string{},
+		Position: "kitchen",
+		Inventory: Items{
+			"carrot": newCarrot(),
+		},
 	}
 }
