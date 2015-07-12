@@ -26,12 +26,12 @@ func Start() {
 
 func (g *Game) commands() map[string]func(string, []string) (string, error) {
 	return map[string]func(string, []string) (string, error){
-		"help": g.help,
-		"look": g.look,
 		"walk": g.walk,
 		"take": g.take,
-		"drop": g.drop,
+		"look": g.look,
+		"help": g.help,
 		"exit": g.exit,
+		"drop": g.drop,
 	}
 }
 
@@ -41,6 +41,7 @@ func (g *Game) Setup() {
 
 	for n, c := range g.commands() {
 		g.Register(n, c)
+		g.Register(string(n[0]), c)
 	}
 }
 
