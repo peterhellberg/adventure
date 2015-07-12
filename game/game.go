@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	welcomeMessage     = "Adventure game!"
+	welcomeMessage     = "Adventure!"
 	byeMessage         = "Good bye! Player 1"
 	genericMessage     = "You don’t know how to do that."
 	notCarryingMessage = "You are not carrying anything."
@@ -33,6 +33,8 @@ func NewGame() *Game {
 
 func Start() {
 	g := NewGame()
+
+	printLogo(g)
 
 	g.Println(welcomeMessage)
 	g.Start()
@@ -249,3 +251,28 @@ func (g *Game) exit(args ...string) (string, error) {
 
 	return byeMessage, nil
 }
+
+func printLogo(g *Game) {
+	for idx, l := range strings.Split(logo, "\n") {
+		if idx < 4 {
+			g.Println("\x1b[36m" + l + "\x1b[39m")
+		} else if idx < 7 {
+			g.Println("\x1b[34m" + l + "\x1b[39m")
+		} else {
+			g.Println("\x1b[37m" + l + "\x1b[39m")
+		}
+	}
+}
+
+var logo = `
+ ▄▄▄      ▓█████▄  ██▒   █▓▓█████ ███▄    █ ▄▄▄█████▓ █    ██  ██▀███  ▓█████
+▒████▄    ▒██▀ ██▌▓██░   █▒▓█   ▀ ██ ▀█   █ ▓  ██▒ ▓▒ ██  ▓██▒▓██ ▒ ██▒▓█   ▀
+▒██  ▀█▄  ░██   █▌ ▓██  █▒░▒███  ▓██  ▀█ ██▒▒ ▓██░ ▒░▓██  ▒██░▓██ ░▄█ ▒▒███
+░██▄▄▄▄██ ░▓█▄   ▌  ▒██ █░░▒▓█  ▄▓██▒  ▐▌██▒░ ▓██▓ ░ ▓▓█  ░██░▒██▀▀█▄  ▒▓█  ▄
+ ▓█   ▓██▒░▒████▓    ▒▀█░  ░▒████▒██░   ▓██░  ▒██▒ ░ ▒▒█████▓ ░██▓ ▒██▒░▒████▒
+ ▒▒   ▓▒█░ ▒▒▓  ▒    ░ ▐░  ░░ ▒░ ░ ▒░   ▒ ▒   ▒ ░░   ░▒▓▒ ▒ ▒ ░ ▒▓ ░▒▓░░░ ▒░ ░
+  ▒   ▒▒ ░ ░ ▒  ▒    ░ ░░   ░ ░  ░ ░░   ░ ▒░    ░    ░░▒░ ░ ░   ░▒ ░ ▒░ ░ ░  ░
+  ░   ▒    ░ ░  ░      ░░     ░     ░   ░ ░   ░       ░░░ ░ ░   ░░   ░    ░
+      ░  ░   ░          ░     ░  ░        ░             ░        ░        ░  ░
+           ░           ░
+`

@@ -3,7 +3,7 @@ package game
 import "testing"
 
 func TestWelcomeMessage(t *testing.T) {
-	if welcomeMessage != "Adventure game!" {
+	if welcomeMessage != "Adventure!" {
 		t.Fatal("unexpected welcome message:", welcomeMessage)
 	}
 }
