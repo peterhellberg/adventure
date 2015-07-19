@@ -45,26 +45,45 @@ func TestNewGame(t *testing.T) {
 
 	if want := "YOU CAN SEE EVERYTHING\n\n" +
 		"You are standing in the basement for the first time.\n" +
-		"Paths: hallway"; out != want {
+		"Paths: hallway\n" +
+		"Items: teleporter"; out != want {
 		t.Fatalf("unexpected output: %q, want %q", out, want)
 	}
 
 	g.drop("carrot")
+	g.take("teleporter")
 
 	out, err = g.items()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if want := "You are carrying: flashlight"; out != want {
+	if want := "You are carrying: flashlight, teleporter"; out != want {
+		t.Fatalf("unexpected output: %q, want %q", out, want)
+	}
+
+	g.teleport("shed")
+
+	if g.Player.Position != "shed" {
+		t.Fatal("unexpected player position:", g.Player.Position)
+	}
+
+	out, err = g.look()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if want := "You are standing in the shed " +
+		"(been here 2 times)\n" +
+		"Paths: garden"; out != want {
 		t.Fatalf("unexpected output: %q, want %q", out, want)
 	}
 }
 
-func TestGameComands(t *testing.T) {
+func TestGameCommands(t *testing.T) {
 	g := &Game{}
 
-	if got, want := len(g.commands()), 8; got != want {
+	if got, want := len(g.commands()), 9; got != want {
 		t.Fatalf("unexpected number of game commands: %d, want %d", got, want)
 	}
 }
@@ -129,7 +148,7 @@ func TestGameHelp(t *testing.T) {
 	}
 
 	if out != canPerformMessage+
-		"drop, exit, help, items, look, take, use, walk" {
+		"drop, exit, help, items, look, take, teleport, use, walk" {
 		t.Fatalf("unexpected output: %q", out)
 	}
 }

@@ -29,7 +29,7 @@ func NewPlaces() Places {
 		"basement": &Place{
 			Name:  "basement",
 			Paths: Paths{"hallway"},
-			Items: Items{},
+			Items: Items{"teleporter": newTeleporter()},
 
 			Enter: func(g *Game) (string, error) {
 				if g.Player.Position == "hallway" && !g.Player.HasItem("flashlight") {
@@ -113,7 +113,7 @@ func (p *Place) describe() string {
 	case 1:
 		l = append(l, "You are standing in the "+p.Name+" for the first time.")
 	default:
-		l = append(l, "You are standing in the "+p.Name+fmt.Sprintf(" count: %d", p.VisitCount))
+		l = append(l, "You are standing in the "+p.Name+fmt.Sprintf(" (been here %d times)", p.VisitCount))
 	}
 
 	if len(p.Paths) > 0 {

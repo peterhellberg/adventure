@@ -30,7 +30,19 @@ func (i Items) Set(name string, item *Item) {
 type Item struct {
 	Use    func(*Game) string
 	Take   func(*Game) string
+	Drop   func(*Game) string
 	Weight int
+}
+
+func newTeleporter() *Item {
+	return &Item{
+		Use: func(g *Game) string {
+			return "Used the teleporter"
+		},
+		Take: func(g *Game) string {
+			return "Took the teleporter"
+		},
+	}
 }
 
 func newLadder() *Item {

@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
@@ -63,14 +64,15 @@ func (g *Game) Place() *Place {
 
 func (g *Game) commands() map[string]func(...string) (string, error) {
 	return map[string]func(...string) (string, error){
-		"drop":  g.drop,
-		"exit":  g.exit,
-		"help":  g.help,
-		"items": g.items,
-		"look":  g.look,
-		"take":  g.take,
-		"use":   g.use,
-		"walk":  g.walk,
+		"drop":     g.drop,
+		"exit":     g.exit,
+		"help":     g.help,
+		"items":    g.items,
+		"look":     g.look,
+		"take":     g.take,
+		"teleport": g.teleport,
+		"use":      g.use,
+		"walk":     g.walk,
 	}
 }
 
@@ -199,6 +201,31 @@ func (g *Game) use(args ...string) (string, error) {
 	}
 
 	return "You are not carrying that item.", nil
+}
+
+func (g *Game) teleport(args ...string) (string, error) {
+	if !g.Player.HasItem("teleporter") {
+		return "You need to have the teleporter in order to teleport.", nil
+	}
+
+	if len(args) != 1 {
+		return "You can only teleport to a single place.", nil
+	}
+
+	return g.teleportPlayerTo(strings.ToLower(args[0])), nil
+}
+
+func (g *Game) teleportPlayerTo(target string) string {
+	p := g.Places[target]
+
+	if p.VisitCount == 0 {
+		return "You can’t teleport to places you haven’t visited before."
+	}
+
+	p.VisitCount++
+	g.Player.Position = target
+
+	return fmt.Sprintf("Teleported to %s", target)
 }
 
 func (g *Game) walk(args ...string) (string, error) {
