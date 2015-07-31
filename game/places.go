@@ -5,8 +5,10 @@ import (
 	"strings"
 )
 
+// Places holds all the places in the game
 type Places map[string]*Place
 
+// Place has a name, paths to other places, items, a visit count and event funcs
 type Place struct {
 	Name       string
 	Paths      Paths
@@ -16,6 +18,7 @@ type Place struct {
 	Look       func(*Game) (string, error)
 }
 
+// NewPlaces creates new places map
 func NewPlaces() Places {
 	return Places{
 		"attic": &Place{
